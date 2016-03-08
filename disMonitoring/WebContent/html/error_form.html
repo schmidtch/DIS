@@ -1,0 +1,130 @@
+<script>
+	var old = "";
+	$(document).ready(function(e){
+		$("#selectApp").change(function() {
+			$("#errorAnlegen").fadeIn();
+		});
+		$("#createError").click(function(e){
+			var app = $("#selectApp").val();
+			var beschreibung = $("#beschreibung").val();
+			var status = $("#selectStatus").val();
+			var kommentar = $("#kommentar").val();
+			var prio = $("#selectPrio").val();
+			var server = $("#server").text();
+			if(server=="No Server") {
+				server = "";
+			} else {
+				server = "";
+				$("#server").children().each(function(){
+					id = $(this).attr('id');
+					if (!isNaN(id)){
+						server = server+id+";";	
+					}
+				});
+				server = server.substring(0, server.length-1);
+				alert(server);
+			}
+			//TODO: Add the Server to the JSON POST String and to the Insert Model
+			
+			if(app!="" && beschreibung!="" && status !="" &&  kommentar!= "" && prio!="" && server!="") {
+				$.ajax({
+					type : "POST",
+					url : "../admin/createError",
+					contentType : "application/json; charset=utf-8",
+					dataType : "json",
+					data : JSON.stringify({ application_id : app, description : beschreibung, status : status, kommentar : kommentar, prio : prio, server : server })
+				}).done(function(msg) {
+					var responseText = msg.state;
+					
+					if(responseText=="error JSON"){
+						alert("Fehler bei der Übertragung check JSON String!");
+					} else if(responseText=="error SQL"){
+						var message = msg.message;
+						alert("DB Error!\n"+message);
+					} else if(responseText=="success"){
+						alert("Monitoring-Error \""+msg.name+"\" created successfully!");
+						//$.post("refreshDBCon", function(data) { $("#chooseDBVerbindung").html(data)  });
+						//$("#chooseDB").val(""); $("#name").val(""); $("#url").val(""); $("#user").val(""); $("#password").val("");
+						$.post("../overview/monitor", function(data) { $("#content").html(data) });
+						$("#submenu").fadeOut();
+					}
+					
+				});
+			} else {
+				alert("Bitte alle Felder ausfüllen!");
+			}
+		});
+		$("#selectServer").change(function() {
+			var val = $("#selectServer").val();
+			var opVal = $("#selectServer option[value='"+val+"']").text();
+			var inhalt = $("#server").text();
+			if(inhalt=="No Server"){
+				$("#server").html("<span id=\""+val+"\">"+opVal+"</span><span onclick=\"removeServer(this, "+val+")\" class=\"delete\">Remove<br /></span>");
+			} else {
+				$("#server").append("<span id=\""+val+"\" style=\"padding-left:100px;\">"+opVal+"</span><span onclick=\"removeServer(this, "+val+")\" class=\"delete\">Remove<br /></span>");
+			}
+			$("#selectServer option[value='"+val+"']").hide();
+			$("#selectServer").val('');
+		});
+	});
+	function removeServer(el, id){
+		//TODO: remove server from list and add it to the choice box again.
+		var text = $("#"+id).text();
+		//$("#selectServer").append($('<option/>', {
+			//value : id,
+			//text : text
+		//}));
+		$("#selectServer option[value='"+id+"']").show();
+		$(el).remove();
+		$("#"+id).remove();
+		if($("#server").text()==""){
+			$("#server").html("No Server");
+		}
+	}
+</script>
+<style>
+.delete{
+	text-decoration: underline;
+	cursor:pointer;
+	padding-left:30px;
+}
+.delete:hover{
+	color:blue;
+}
+</style>
+<h2>Create Error for Application</h2>
+<div id="anlegenFormContainer">
+	<div id="anlegenContainer">
+		<fieldset>
+			<legend>Choose Application:</legend>
+			<select id="selectApp">
+				$applOption
+			</select>
+		</fieldset>
+		<fieldset id="errorAnlegen" style="display:none; text-align:left;">
+			<legend>Enter Error-Info</legend>
+			<label for="beschreibung">Desciption: </label><input type="text" style="width:300px;" name="beschreibung" id="beschreibung" /><br style="clear:both;" />
+			<label for="status">State: </label>
+			<select id="selectStatus" name="selectStatus">
+				<option value="">==Choose==</option>
+				<option value="Critical">Critical</option>
+				<option value="Warning">Warning</option>
+			</select><br style="clear:both;" />
+			<label for="kommentar">Comment: </label><input type="text" style="width:300px;" name="kommentar" id="kommentar" /><br style="clear:both;" />
+			<label for="selectPrio">Priority: </label>
+			<select id="selectPrio" name="selectPrio">
+				<option value="">==Choose==</option>
+				<option value="p1">Prio 1</option>
+				<option value="p2">Prio 2</option>
+				<option value="p3">Prio 3</option>
+				<option value="p4">Prio 4</option>
+			</select><br style="clear:both;" />
+			<label for="selectServer">Choose Server:</label>
+			<select id="selectServer" name="selectServer">
+				$serverOption
+			</select><br style="clear:both;" />
+			<label for="server">Server: </label><p style="padding:0; margin:0;" id="server">No Server</p>
+			<p style="text-align:right"><input type="button" value="Create" id="createError" /></p>
+		</fieldset>
+	</div>
+</div>

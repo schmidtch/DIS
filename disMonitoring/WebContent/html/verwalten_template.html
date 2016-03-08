@@ -1,0 +1,24 @@
+<script>
+	$(document).ready(function(){
+		$("#selectApplication").change(function() {
+			$.ajax({
+				type : "POST",
+				url : "../admin/manageApplication",
+				contentType : "application/json; charset=utf-8",
+				dataType : "json",
+				data : JSON.stringify({ id : $(this).val() })
+			}).done(function(msg) {
+				if(msg.state=="success"){
+					$("#showDataForApplication").html(msg.data);
+				}
+			});
+		});
+	})
+</script>
+<h2>Manage Application</h2>
+<div style="width:55%; padding-top:20px; margin: auto; text-align: center;">
+	<select id="selectApplication">
+		$applicationOption
+	</select>
+	<div id="showDataForApplication" style="padding-top:25px;"></div>
+</div>

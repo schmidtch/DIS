@@ -1,0 +1,24 @@
+	<script>
+		$(document).ready(function(e){
+			$("#chooseDB$name option[value='$database']").attr("selected", "selected");
+		});
+	</script>
+	
+	<div class="verwaltenWrapper">
+		<p class="verwaltenBearbeiten" onclick="bearbeiten(this)" id="$name">$name</p>
+		<p class="deleteWrapper" onclick="deleteModi('$name')"> <!-- <img src="../pictures/delete-icon.png" alt="Delete" /> --></p><br style="clear:both;" />
+	</div>
+	
+	<fieldset id="uebernehmen$name" style="display:none; text-align:left;">
+		<legend>Datenbank Verbindung:</legend>
+		<label for="chooseDB">DB W&auml;hlen:</label>
+		<select id="chooseDB$name" name="chooseDB">
+			<option value="oracle.jdbc.OracleDriver">Oracle</option>
+			<option value="com.mysql.jdbc.Driver">Mysql</option>
+			<option value="com.microsoft.sqlserver.jdbc.SQLServerDriver">SQL Server</option>
+			<option value="com.sybase.jdbc3.jdbc.SybDriver">Sybase</option>
+		</select><br style="clear:both;" />
+		<label for="url">URL: </label><input type="text" style="width:300px;" value="$url" name="url" id="url$name" /><br style="clear:both;" />
+		<label for="user">User: </label><input type="text" style="width:300px;" value="$user" name="user" id="user$name" /><br style="clear:both;" />
+		<label for="password">Password:</label><input type="password" style="width:300px;" value="$password" name="password" id="password$name" /><br style="clear:both;" />
+	</fieldset>

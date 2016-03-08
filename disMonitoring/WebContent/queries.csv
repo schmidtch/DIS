@@ -1,0 +1,25 @@
+getSupervisors;select * from dis_supervisor order by supervisor_id
+getCompanies;select * from dis_company order by company_id
+getApplications;select * from dis_application where application_id!=0
+getServer;select * from dis_server
+getServerByMonitoringId;select s.* from dis_server s, dis_monitoring m, dis_application a where m.monitoring_id=$monitoring_id and m.application_id=a.application_id and a.application_id=s.application_id
+getMonitoringOverview;select a.name as Application, s.name as Server, m.description, s.error, s.server_id, m.monitoring_id, a.application_id, m.datum from dis_monitoring m, dis_server s, dis_application a, dis_logdaten ld where s.application_id=m.application_id and a.application_id=m.application_id and m.monitoring_id=ld.monitoring_id and ld.server_id=s.server_id order by a.name, s.server_id
+getMonitoringJobs;select m.monitoring_id, a.application_id, m.description, a.name from dis_monitoring m, dis_application a where m.application_id=a.application_id order by a.name, m.description
+getTaskByServerName;select a.application_id, a.name, s.server_id, m.monitoring_id, m.description, m.datum, ld.search_string, ld.logfile, ld.logdaten_id, ld.logdir from dis_server s, dis_application a, dis_monitoring m, dis_logdaten ld where s.name='$servername' and s.application_id=a.application_id and a.application_id=m.application_id and s.server_id=ld.server_id and ld.monitoring_id=m.monitoring_id
+getMaxHistoryForTask;select * from dis_history h1 where h1.history_id=(select max(h2.history_id) from dis_history h2 where h2.server_id = $server_id and h2.monitoring_id = $monitoring_id)
+getErrorServerByAppId;select s.server_id, s.name, ld.monitoring_id from dis_server s, dis_logdaten ld, dis_monitoring m where s.server_id=ld.server_id and ld.monitoring_id=m.monitoring_id and s.application_id=$application_id and s.server_id=$server_id order by s.server_id
+getErrorAnzahlForServer;select count(h.history_id) as anzahl from dis_history h where h.server_id=$server_id and h.monitoring_id=$monitoring_id and h.end_date is null
+getHistoryByMIDAndSID;select h.beginn_date, h.error_string from dis_history h where h.monitoring_id=$monitoring_id and h.server_id=$server_id and end_date is null order by beginn_date desc
+getOverviewByApplicationID;select a.name, m.description, s.name as server, su.vorname, su.nachname, a.bereitschaft from dis_application a, dis_monitoring m, dis_server s, dis_supervisor su, dis_logdaten ld where a.application_id=$application_id and a.application_id=s.application_id and a.application_id=m.application_id and a.supervisor_id=su.supervisor_id and s.server_id=ld.server_id and m.monitoring_id=ld.monitoring_id order by server
+insertApplication;insert into dis_application values(dis_application_seq.nextval, $supervisor, $company, '$name', '$beschreibung', '$bereitschaft')
+insertMonitoringError;insert into dis_monitoring (monitoring_id, application_id, description, status, kommentar, prio, duplicate_count) values (dis_monitoring_seq.nextval, $appid, '$description', '$status', '$kommentar', '$prio', 0)
+insertHistory;insert into dis_history values(dis_history_seq.nextval, (select datum from dis_monitoring where monitoring_id=$monitoring_id), null, $monitoring_id, '$description', $server_id)
+insertLogdataForServer;insert into dis_logdaten values(dis_logdaten_seq.nextval, $monitoring_id, '$logfile', '$logdir', '$search_string', $server_id)
+insertCompany;insert into dis_company values(dis_company_seq.nextval, '$name', '$telefon', '$email')
+insertServer;insert into dis_server values(dis_server_seq.nextval, 0, '$name', 0)
+updateServer;update dis_server set application_id=$appid where server_id=$id
+updateMonitoringErrorById;update dis_monitoring set datum=sysdate, duplicate_count=(select duplicate_count from dis_monitoring where monitoring_id=$monitoring_id)+1 where monitoring_id=$monitoring_id
+updateMonitoringErrorSetAck;update dis_monitoring set last_date=sysdate, datum=null where monitoring_id=$monitoring_id
+updateHistorySetEndDate;update dis_history set end_date=(select last_date from dis_monitoring where monitoring_id=$monitoring_id) where end_date is null and monitoring_id=$monitoring_id and server_id=$server_id
+updateServerSetError;update dis_server set error=$error where server_id=$server_id and application_id=$application_id
+updateErrorDate;update dis_monitoring m set m.datum=(select beginn_date from dis_history h1 where h1.history_id=(select max(h2.history_id) from dis_history h2 where h2.server_id = $server_id and h2.monitoring_id = $monitoring_id)) where m.monitoring_id=$monitoring_id

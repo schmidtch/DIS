@@ -1,0 +1,72 @@
+<script>
+	var old = "";
+	$(document).ready(function(e){
+		$("#selectMonitoringJob").change(function() {
+			ids = $(this).val().split(",");
+			monitoring_id = ids[0];
+			$.ajax({
+				type : "GET",
+				url : "../admin/server/"+monitoring_id
+			}).done(function(msg) {
+					$("#selectServer").html(msg);
+					$("#logDataInfo").fadeIn();
+			});
+		});
+		$("#createLogDaten").click(function(e){
+			var server_id = $("#selectServer").val();
+			var logfile = $("#logfile").val();
+			var logdir = $("#logdir").val();
+			var monitoring_id = $("#selectMonitoringJob").val().split(",")[0];
+			var search_string = $("#search_string").val();
+			if(server_id!="" && logfile!="" && logdir !="" && monitoring_id != "" && search_string !=""){
+				$.ajax({
+					type : "POST",
+					url : "../admin/createLogDaten",
+					contentType : "application/json; charset=utf-8",
+					dataType : "json",
+					data : JSON.stringify({ server_id : server_id, logfile : logfile, logdir : logdir, monitoring_id : monitoring_id, search_string : search_string })
+				}).done(function(msg) {
+					var responseText = msg.state;
+					
+					if(responseText=="error JSON"){
+						alert("Fehler bei der Übertragung check JSON String!");
+					} else if(responseText=="error SQL"){
+						var message = msg.message;
+						alert("DB Error!\n"+message);
+					} else if(responseText=="success"){
+						alert("Logdate for Server created successfully!");
+						//$.post("refreshDBCon", function(data) { $("#chooseDBVerbindung").html(data)  });
+						//$("#chooseDB").val(""); $("#name").val(""); $("#url").val(""); $("#user").val(""); $("#password").val("");
+						$.post("../overview/monitor", function(data) { $("#content").html(data) });
+						$("#submenu").fadeOut();
+					}
+					
+				});
+			} else {
+				alert("Bitte alle Felder ausfüllen!");
+			}
+		});
+	});
+</script>
+<h2>Create Log Data for Job and Server</h2>
+<div id="anlegenFormContainer">
+	<div id="anlegenContainer">
+		<fieldset>
+			<legend>Choose Monitoring Job:</legend>
+			<select id="selectMonitoringJob">
+				$monitoringOption
+			</select>
+		</fieldset>
+		<fieldset id="logDataInfo" style="display:none; text-align:left;">
+			<legend>Choose Server</legend>
+			<label for="selectServer">Choose Server:</label>
+			<select id="selectServer" name="selectServer">
+			</select><br style="clear:both;" />
+			<label for="logfile">Logfile: </label><input type="text" style="width:300px;" name="logfile" id="logfile" /><br style="clear:both;" />
+			<label for="path">Log-Directory: </label><input type="text" style="width:300px;" name="logdir" id="logdir" /><br style="clear:both;" />
+			<label for="search_string">Search-String: </label><input type="text" style="width:300px" name="search_string" id="search_string" /><br style="clear:both;" />
+			<br style="clear:both;" />
+			<p style="text-align:right"><input type="button" value="Create" id="createLogDaten" /></p>
+		</fieldset>
+	</div>
+</div>

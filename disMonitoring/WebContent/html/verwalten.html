@@ -1,0 +1,178 @@
+<script>
+var old = "";
+$(document).ready(function(e){
+	$("#verwaltenMenu ul li a").click(function(e){
+		var id = $(this).attr('id');
+		menuClick(id);
+	});
+});
+
+function menuClick(id){
+	if(id=="db")
+		$("#inhalt h2").html('DB Verbindungen');
+	else
+		$("#inhalt h2").html('Queries');
+	
+	$.ajax({
+		type : "POST",
+		url : "verwalten",
+		contentType : "application/json; charset=utf-8",
+		dataType : "json",
+		data : JSON.stringify({ type : id }),
+		beforeSend: function (e) { $("#verwaltenContent").hide();}
+	}).done(function(msg) {
+		var res = msg.result;
+		if(res == "no"){
+			$("#verwaltenContent").html("<h2>Leider nichts vorhanden!</h2>"); 
+		} else if (res == "yes"){
+			$("#verwaltenContent").html(msg.content);  
+		}
+		$("#verwaltenContent").fadeIn();
+	});
+}
+
+
+var oldID=null;
+function bearbeiten(el) {
+	var id = $(el).attr('id');
+	if(oldID==null){
+		$("#uebernehmen"+id).slideDown();
+	} else if(id==oldID) {
+		$("#uebernehmen"+id).slideUp();
+		oldID = null;
+		id = null;
+	} else {
+		$("#uebernehmen"+oldID).slideUp(function complete(){$("#uebernehmen"+id).slideDown();});
+	}
+	oldID = id;	
+	$("#hiddenAct").val(id);
+}
+
+var oldIDTree=null;
+function openFirstTreeAct(el){
+	var id = $(el).html();
+	if(oldIDTree==null){
+		$("#"+id+"Content").slideDown();
+	} else if(id==oldIDTree) {
+		$("#"+id+"Content").slideUp();
+		oldIDTree = null;
+		id = null;
+	} else {
+		$("#"+oldIDTree+"Content").slideUp(function complete(){$("#"+id+"Content").slideDown();});
+	}
+	oldIDTree = id;	
+}
+
+function saveSettings() {
+	if(oldID!=null){
+		var h = $("#ueberschrift").text();
+		var beschr = $("#hiddenAct").val();
+		var type = "";
+		if(h=="DB Verbindungen"){
+			$.ajax({
+				type : "POST",
+				url : "updateDB",
+				contentType : "application/json; charset=utf-8",
+				dataType : "json",
+				data : JSON.stringify({ name : beschr, url : $("#url"+beschr).val(), usr : $("#user"+beschr).val(), pwd : $("#password"+beschr).val(), db : $("#chooseDB"+beschr).val() })
+			}).done(function(msg) {
+				var state = msg.state;
+				if(state=="success"){
+					alert("Erfolgreich übernommen");
+					$("#hiddenAct").val("");
+					$("#uebernehmen"+beschr).slideUp();
+					oldID = null;
+				} else if(state="error"){
+					alert("Fehler beim Übernehmen, Bitte nochmals versuchen!");
+				}
+			});
+		} else if(h=="Queries"){
+			var kommentar = $("#kommentar"+beschr).val();
+			var query = $("#query"+beschr).val();
+			var db_id = $("#chooseDBVerbindung"+beschr).val();
+			$.ajax({
+				type : "POST",
+				url : "updateQuery",
+				contentType : "application/json; charset=utf-8",
+				dataType : "json",
+				data : JSON.stringify({ "beschreibung" : beschr, "kommentar" : kommentar, "query" : query, "db_name" : db_id })
+			}).done(function(msg) {
+				var state = msg.state;
+				if(state=="success"){
+					alert("Erfolgreich übernommen");
+					$("#hiddenAct").val("");
+					$("#uebernehmen"+beschr).slideUp();
+					oldID = null;
+				} else if(state="error"){
+					alert("Fehler beim Übernehmen, Bitte nochmals versuchen!");
+				}
+			});
+		}		
+	} else {
+		alert("Bitte Daten wählen!");
+	}
+}
+
+function deleteModi(id){
+	var entsch = window.confirm('Wollen sie '+id+' wirklich löschen?');
+	if(entsch){
+		var h = $("#ueberschrift").text();
+		var beschr = id;
+		var type = "";
+		if(h=="DB Verbindungen") {
+			var type = "db";
+			$.ajax({
+				type : "POST",
+				url : "delete",
+				contentType : "application/json; charset=utf-8",
+				dataType : "json",
+				data : JSON.stringify({ "type" : type, name : beschr, url : $("#url"+beschr).val(), usr : $("#user"+beschr).val(), pwd : $("#password"+beschr).val(), db : $("#chooseDB"+beschr).val() })
+			}).done(function(msg) {
+				var state = msg.state;
+				if(state=="success"){
+					alert("Erfolgreich übernommen");
+					menuClick(type);
+				} else {
+					alert("Fehler beim Übernehmen, Bitte nochmals versuchen!");
+				}
+			});
+		} else if(h=="Queries") {
+			var type = "query";
+			var kommentar = $("#kommentar"+beschr).val();
+			var query = $("#query"+beschr).val();
+			var db_id = $("#chooseDBVerbindung"+beschr).val();
+			$.ajax({
+				type : "POST",
+				url : "delete",
+				contentType : "application/json; charset=utf-8",
+				dataType : "json",
+				data : JSON.stringify({ "type" : type, "beschreibung" : beschr, "kommentar" : kommentar, "query" : query, "db_name" : db_id })
+			}).done(function(msg) {
+				var state = msg.state;
+				if(state=="success"){
+					alert("Erfolgreich übernommen");
+					menuClick(type);
+				} else {
+					alert("Fehler beim Übernehmen, Bitte nochmals versuchen!");
+				}
+			});
+		}		
+	}
+}
+</script>
+<div id="verwaltenFormContainer">
+	<input type="hidden" name="hidden" value="" id="hiddenAct" />
+	<div id="verwaltenMenu">
+		<ul style="margin-left:140px;">
+			<li><a id="db" href="#">DB Verbindungen</a></li>
+			<li><a id="query" href="#">Queries</a></li>
+		</ul>
+	</div><br style="clear:both;" />
+	<div id="inhalt">
+		<h2 id="ueberschrift"></h2>
+		<div id="spinner"style="text-align:center; display:none;">
+			<img src="../pictures/ajax-loader.gif" alt="loading..." />
+		</div>
+		<div id="verwaltenContent"></div>
+	</div>
+</div>

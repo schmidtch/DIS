@@ -1,0 +1,160 @@
+<script>
+var shownServerId="", shownErrorId="", shownMonitor=0;
+$(document).ready(function(e){
+	$("#back_content").css('min-height',$(this).height()-170);
+	$.post("monitor", function(data) {
+		content=data;
+	}).fail(function(data) {
+		content="<p style=\"text-align:center; font-weight:bold; font-size:18px;\">A Error accured at the Server.</p>"+data;
+	}).always(function() {
+		$("#spinner").fadeOut(function complete() {
+			$("#content").html(content);
+			$("#content").fadeIn();
+		});
+	});
+	shownMonitor=1;
+	setInterval("loadMonitor();", 300000);
+});
+$("#menu ul li").click(function(e){
+	if($(this).attr('id')=="anlegen") { 
+		if($("#submenu").css('display')=="none") { 
+			$("#submenu").fadeIn();
+		}
+	} else {
+		if($("#submenu").css('display')!="none") $("#submenu").fadeOut();
+		var url = $(this).attr('id');
+		if(url!="monitor") {
+			url = "../admin/"+url;
+			shownMonitor=0; 
+		} else {
+			shownMonitor=1;
+		}
+		$.post(url, function(data) { $("#content").html(data)  });
+	}
+});
+$("#submenu ul li").click(function(e){
+	shownMonitor=0; 
+	$.get("../admin/create"+$(this).attr('id'), function(data) { $("#content").html(data) });
+});
+
+function ack_error(status, id, server, app){
+	if(status=='red'){		
+		$.ajax({
+			type : "POST",
+			url : "../service/ackTask",
+			contentType : "application/json; charset=utf-8",
+			dataType : "json",
+			data : JSON.stringify({ monitoring_id : id, server_id : server, app_id : app })
+		}).done(function(msg) {
+			var responseText = msg.state;
+			
+			if(responseText=="error JSON"){
+				alert("Fehler bei der Übertragung check JSON String!");
+			} else if(responseText=="error SQL"){
+				var message = msg.message;
+				alert("DB Error!\n"+message);
+			} else if(responseText=="success"){
+				$.post("monitor", function(data) { $("#content").html(data);  });
+			}
+			
+		});
+	}
+}
+
+function back(){
+	shownMonitor=1;
+	loadMonitor();
+}
+
+function loadMonitor(){
+	var content = "";
+	if(shownMonitor==1){
+		$("#content").hide();
+		$("#spinner").fadeIn(function complete() {
+			$.post("monitor", function(data) {
+				content=data;
+			}).fail(function(data) {
+				content="<p style=\"text-align:center; font-weight:bold; font-size:18px;\">A Error accured at the Server.</p>"+data;
+			}).always(function() {
+				$("#spinner").fadeOut(function complete() {
+					$("#content").html(content);
+					$("#content").fadeIn();
+				});
+			});
+		});
+	}
+}
+
+function showHistoryForError(monitoring_id, server_id, monitoringName, serverName){
+	shownMonitor=0;	
+	var content="";
+	$("#content").hide();
+	$("#spinner").fadeIn(function complete() {
+		$.get("../admin/history/"+monitoring_id+"/"+server_id+"/"+monitoringName+"/"+serverName, function(data) {
+			content=data;
+		}).fail(function(data) {
+			content="<p style=\"text-align:center; font-weight:bold; font-size:18px;\">A Error accured at the Server.</p>"+data;
+		}).always(function() {
+			$("#spinner").fadeOut(function complete() {
+				$("#content").html(content);
+				$("#content").fadeIn();
+			});
+		});
+	});
+}
+
+function showServer(id){
+	$("#"+shownServerId).slideUp();
+	if(shownServerId!=id){
+		$("#"+id).slideDown();
+	}
+	if(id==shownServerId) shownServerId="";
+	else shownServerId=id;
+}
+
+function showError(id){
+	$("#"+shownErrorId).slideUp();
+	if(shownErrorId!=id){
+		$("#"+id).slideDown();
+	}
+	if(id==shownErrorId) shownErrorId="";
+	else shownErrorId=id;
+}
+
+function logout(){
+	window.location.href="/disMonitoring/overview/login";
+}
+
+</script>
+<div id="container">
+	<div id="head_user">
+		<h1 style="color:#FFFFFF;">DIS Monitor</h1>
+	</div>
+	<div id="menu">
+		<ul>
+			<li id="monitor">Monitor</li>
+			<li id="verwalten">Manage</li>
+			<li id="anlegen">Create</li>
+		</ul>
+	</div>
+	<div id="sideMenu">
+		<span onclick="logout()" style = "margin-right: 30px;line-height: 2; cursor:pointer; text-decoration:underline;">Logout</span>
+	</div>
+	<div id="back_content">
+		<div id="blankBanner">
+			<div id="submenu">
+				<ul>
+					<li id="Application">Application</li>
+					<li id="Error">Error</li>
+					<li id="LogDaten">Log-Data</li>
+					<li id="Company">Company</li>
+					<li id="Server">Server</li>
+				</ul>
+			</div>
+		</div>
+		<div id="spinner" style="text-align:center;">
+			<img style="width:100px;" src="../pictures/spinner.gif" alt="spinner" />
+		</div>
+		<div id="content"></div>
+	</div>
+</div>

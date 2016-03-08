@@ -1,0 +1,12 @@
+	
+	<div class="verwaltenWrapper">
+		<p class="verwaltenBearbeiten" onclick="bearbeiten(this)" id="$beschreibung">$beschreibung</p>
+		<p class="deleteWrapper" onclick="deleteModi('$beschreibung')"><!-- <img src="../pictures/delete-icon.png" alt="Delete" /> --></p><br style="clear:both;" />
+	</div>
+	<fieldset id="uebernehmen$beschreibung" style="display:none; text-align:left;">
+		<legend>Query:</legend>
+		<label for="comment">Kommentar:</label><input type="text" style="width:300px;" name="kommentar" id="kommentar$beschreibung" value="$kommentar" /><br style="clear:both;" />
+		<label for="db">Datenbank:</label><select name="db" id="chooseDBVerbindung$beschreibung">$dbOption</select><br style="clear:both;" />
+		<label for="query">Query:</label>
+		<textarea name="query" id="query$beschreibung" cols="50" rows="10">$query</textarea>
+	</fieldset>

@@ -1,0 +1,16 @@
+<div style="width:1200px; padding-bottom:20px; margin:auto;">
+	<h2>Error-History for $monitoringName on $serverName</h2>
+	<div style="padding-top:10px; padding-bottom:10px;">
+		<span style="color:Blue; cursor:pointer;" onclick="back();">Back</span> | 
+		<span style="color:Blue; cursor:pointer;" onclick="showHistoryForError('$monitoring_id', '$server_id', '$monitoringName', '$serverName');">Refresh</span>
+	</div>
+	<table>
+		<thead>
+			<tr>
+				<th style="width:15%;">Datum</th>
+				<th style="width:85%">Error Description</th>
+			</tr>
+		</thead>
+		<tbody>$tbody</tbody>
+	</table>
+</div>

@@ -1,0 +1,46 @@
+<script>
+	var old = "";
+	$(document).ready(function(e){
+		$("#createServer").click(function(e){
+			var name = $("#name").val();
+			if(name!=""){
+				$.ajax({
+					type : "POST",
+					url : "../admin/createServer",
+					contentType : "application/json; charset=utf-8",
+					dataType : "json",
+					data : JSON.stringify({ name : name })
+				}).done(function(msg) {
+					var responseText = msg.state;
+					
+					if(responseText=="error JSON"){
+						alert("Fehler bei der Übertragung check JSON String!");
+					} else if(responseText=="error SQL"){
+						var message = msg.message;
+						alert("DB Error!\n"+message);
+					} else if(responseText=="success"){
+						alert("Server created!");
+						//$.post("refreshDBCon", function(data) { $("#chooseDBVerbindung").html(data)  });
+						//$("#chooseDB").val(""); $("#name").val(""); $("#url").val(""); $("#user").val(""); $("#password").val("");
+						$.post("../overview/monitor", function(data) { $("#content").html(data) });
+						$("#submenu").fadeOut();
+					}
+					
+				});
+			} else {
+				alert("Bitte alle Felder ausfüllen!");
+			}
+		});
+	});
+</script>
+<h2>Create Server</h2>
+<div id="anlegenFormContainer">
+	<div id="anlegenContainer">
+		<fieldset id="companyAnlegen" style="text-align:left;">
+			<legend>Enter Server-Name</legend>
+			<p style="text-align:center;">Please enter the full Hostname (Case Sensetive).</p>
+			<label for="name">Name: </label><input type="text" style="width:300px;" name="name" id="name" /><br style="clear:both;" />
+			<p style="text-align:right"><input type="button" value="Create" id="createServer" /></p>
+		</fieldset>
+	</div>
+</div>

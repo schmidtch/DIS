@@ -1,0 +1,68 @@
+<script>
+	var old = "";
+	$(document).ready(function(e){
+		$("#selectSupervisor").change(function() {
+			$("#appAnlegen").fadeIn();
+		});
+		$("#createApp").click(function(e){
+			var supervisor = $("#selectSupervisor").val();
+			var company = $("#selectCompany").val();
+			var name = $("#name").val();
+			var beschreibung = $("#beschreibung").val();
+			var bereitschaft = $("#selectBereitschaft").val();
+			if(supervisor!="" && company!="" && name !="" && beschreibung != "" && bereitschaft !=""){
+				$.ajax({
+					type : "POST",
+					url : "../admin/createApplication",
+					contentType : "application/json; charset=utf-8",
+					dataType : "json",
+					data : JSON.stringify({ supervisor : supervisor, company : company, name : name, beschreibung : beschreibung, bereitschaft : bereitschaft })
+				}).done(function(msg) {
+					var responseText = msg.state;
+					
+					if(responseText=="error JSON"){
+						alert("Fehler bei der Übertragung check JSON String!");
+					} else if(responseText=="error SQL"){
+						var message = msg.message;
+						alert("DB Error!\n"+message);
+					} else if(responseText=="success"){
+						alert("Application \""+name+"\" created successfully!");
+						//$.post("refreshDBCon", function(data) { $("#chooseDBVerbindung").html(data)  });
+						//$("#chooseDB").val(""); $("#name").val(""); $("#url").val(""); $("#user").val(""); $("#password").val("");
+						$.post("../overview/monitor", function(data) { $("#content").html(data) });
+						$("#submenu").fadeOut();
+					}
+					
+				});
+			} else {
+				alert("Bitte alle Felder ausfüllen!");
+			}
+		});
+	});
+</script>
+<h2>Create Application</h2>
+<div id="anlegenFormContainer">
+	<div id="anlegenContainer">
+		<fieldset>
+			<legend>Choose Supervisor:</legend>
+			<select id="selectSupervisor">
+				$supervisorOption
+			</select>
+		</fieldset>
+		<fieldset id="appAnlegen" style="display:none; text-align:left;">
+			<legend>Enter Application-Info</legend>
+			<label for="selectCompany">Ext. Company:</label>
+			<select id="selectCompany" name="selectCompany">
+				$companyOption
+			</select><br style="clear:both;" />
+			<label for="name">Name: </label><input type="text" style="width:300px;" name="name" id="name" /><br style="clear:both;" />
+			<label for="beschreibung">Description: </label><input type="text" style="width:300px;" name="beschreibung" id="beschreibung" /><br style="clear:both;" />
+			<label for="Bereitschaft">Attendance: </label>
+			<select id="selectBereitschaft" name="selectBereitschaft">
+				<option value="Y">Yes</option>
+				<option value="N">No</option>
+			</select><br style="clear:both;" />
+			<p style="text-align:right"><input type="button" value="Create" id="createApp" /></p>
+		</fieldset>
+	</div>
+</div>
