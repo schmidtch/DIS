@@ -11,6 +11,7 @@ import at.kabeg.model.MonitoringError;
 import at.kabeg.model.Server;
 import at.kabeg.utilities.DBConnectionHandler;
 import at.kabeg.utilities.DBQueryHandler;
+import at.kabeg.utilities.MonitorViewParser;
 import at.kabeg.utilities.Queries;
 import at.kabeg.utilities.StringReplacer;
 
@@ -71,10 +72,11 @@ public class MonitoringErrorController {
 		return errors;
 	}
 	
-	public ArrayList<Application> getMonitoringOverview() throws SQLException{
+	public String getMonitoringOverview() throws SQLException{
 		ArrayList<Application> apps = new ArrayList<Application>();
 		Statement stmt = DBConnectionHandler.getConnection(false).createStatement();
-		ResultSet rs = stmt.executeQuery(DBQueryHandler.getQuery(Queries.getMonitoringOverview.toString()));
+		MonitorViewParser mevp = new MonitorViewParser(stmt.executeQuery(DBQueryHandler.getQuery(Queries.getMonitoringOverview.toString())));
+		/*ResultSet rs2 = null;
 		Application a=null;
 		MonitoringError me=null;
 		Server s=null;
@@ -99,9 +101,9 @@ public class MonitoringErrorController {
 			} 
 			a.addServer(s);
 			a.addError(me);
-		}
+		}*/
 		DBConnectionHandler.closeConnection(rs, stmt);
-		return apps;		
+		return mevp.getApplicationsInHTML();		
 	}
 	
 	public void updateMonitoringErrorSetAck(String monitoringId, String server_id, String app_id, String error) throws SQLException{		

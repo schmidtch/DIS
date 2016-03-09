@@ -24,29 +24,13 @@ public class Monitor {
 		
 		StringReplacer sr = new StringReplacer();
 		Properties p = new Properties();
-		ArrayList<Application> apps = new ArrayList<Application>();
 		MonitoringErrorController mec = new MonitoringErrorController();
 		try {
-			apps = mec.getMonitoringOverview();
-			if(!apps.isEmpty()){
-				
-				for(Application a : apps){
-					for(Server s : a.getServers()){
-						for(MonitoringError m : a.getErrors()){
-							if(m.hasError() && s.getError()==0){
-								s.setError(true);
-							}
-						}
-						if(s.getError()==1 && !a.hasError()){
-							a.setError(true);
-						}
-					}
-					entry+=a.toDivHTMLTag();
-				}
-			}
+			entry = mec.getMonitoringOverview();
 		} catch (SQLException e) {
+			entry = e.getMessage();
 			e.printStackTrace();
-		} finally{}
+		}
 		
 		p=new Properties();
 		p.put("$monitorContent", entry);
