@@ -19,12 +19,13 @@ import at.kabeg.utilities.DBQueryHandler;
 import at.kabeg.utilities.Queries;
 import at.kabeg.utilities.StringReplacer;
 
-@Path("/checkTask")
+@Path("/task")
 public class CheckTask {
 	
 	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces({ MediaType.APPLICATION_JSON})
+	@Path("/check")
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Produces({MediaType.APPLICATION_JSON})
 	public String start(String input) {
 		
 		JSONObject response = new JSONObject();

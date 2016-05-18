@@ -2,6 +2,7 @@ getSupervisors;select * from dis_supervisor order by supervisor_id
 getCompanies;select * from dis_company order by company_id
 getApplications;select * from dis_application where application_id!=0
 getServer;select * from dis_server
+getMonitoringError;select * from dis_monitoring
 getServerByMonitoringId;select s.* from dis_server s, dis_monitoring m, dis_application a where m.monitoring_id=$monitoring_id and m.application_id=a.application_id and a.application_id=s.application_id
 getMonitoringOverview;select a.name as Application, s.name as Server, m.description, s.error, s.server_id, m.monitoring_id, a.application_id, m.datum from dis_monitoring m, dis_server s, dis_application a, dis_logdaten ld where s.application_id=m.application_id and a.application_id=m.application_id and m.monitoring_id=ld.monitoring_id and ld.server_id=s.server_id order by a.name, s.server_id
 getMonitoringJobs;select m.monitoring_id, a.application_id, m.description, a.name from dis_monitoring m, dis_application a where m.application_id=a.application_id order by a.name, m.description

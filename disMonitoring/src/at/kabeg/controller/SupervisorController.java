@@ -17,7 +17,7 @@ public class SupervisorController {
 		Statement stmt = DBConnectionHandler.getConnection(false).createStatement();
 		ResultSet rs = stmt.executeQuery(DBQueryHandler.getQuery(Queries.getSupervisors.toString()));
 		while(rs.next()){
-			supervisors.add(new Supervisor(Integer.parseInt(rs.getString("supervosor_id")), rs.getString("nachname"), rs.getString("vorname"), rs.getString("email"), rs.getString("telefon")));
+			supervisors.add(new Supervisor(Integer.parseInt(rs.getString("supervisor_id")), rs.getString("nachname"), rs.getString("vorname"), rs.getString("email"), rs.getString("telefon")));
 		}		
 		DBConnectionHandler.closeConnection(rs, stmt);
 		return supervisors;

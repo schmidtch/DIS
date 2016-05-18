@@ -15,6 +15,7 @@ import at.kabeg.utilities.StringReplacer;
 public class Show {
 	
 	@POST
+	@Path("/index")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces({ MediaType.TEXT_HTML})
 	public String start(String input) {
@@ -23,7 +24,7 @@ public class Show {
 		try {
 			JSONObject jo = new JSONObject(input);
 			if(jo.getString("session").equals("6a438e3f3a3015785b24fc9a922517c9")){
-				result = sr.replaceInFile(this.getClass().getResource("../../../../../html/index.html").getPath());
+				result = sr.replaceInFile(Thread.currentThread().getContextClassLoader().getResource("html/index.html").getPath());
 			} else {
 				result = "<h2>Permission denied!</h2>";
 			}

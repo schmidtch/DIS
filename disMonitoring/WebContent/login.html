@@ -19,7 +19,7 @@
 			var password = MD5($("#password").val());
 			$.ajax({
 				type : "POST",
-				url : "login",
+				url : "doLogin",
 				contentType : "application/json; charset=utf-8",
 				dataType : "json",
 				data : JSON.stringify({
@@ -39,7 +39,7 @@
 					if(msg.admin=="yes"){
 						$("#my_style").attr("href","/disMonitoring/style/admin_admin_style.css");
 					}
-					$.post("show", JSON.stringify({ session: msg.session }), function(data) { $("body").html(data);  });
+					$.post("../show/index", JSON.stringify({ session: msg.session }), function(data) { $("body").html(data);  });
 				}
 				
 			});

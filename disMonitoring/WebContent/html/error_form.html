@@ -29,7 +29,7 @@
 			if(app!="" && beschreibung!="" && status !="" &&  kommentar!= "" && prio!="" && server!="") {
 				$.ajax({
 					type : "POST",
-					url : "../admin/createError",
+					url : "../../admin/error/create",
 					contentType : "application/json; charset=utf-8",
 					dataType : "json",
 					data : JSON.stringify({ application_id : app, description : beschreibung, status : status, kommentar : kommentar, prio : prio, server : server })
@@ -37,7 +37,7 @@
 					var responseText = msg.state;
 					
 					if(responseText=="error JSON"){
-						alert("Fehler bei der Übertragung check JSON String!");
+						alert("Fehler bei der ï¿½bertragung check JSON String!");
 					} else if(responseText=="error SQL"){
 						var message = msg.message;
 						alert("DB Error!\n"+message);
@@ -45,13 +45,13 @@
 						alert("Monitoring-Error \""+msg.name+"\" created successfully!");
 						//$.post("refreshDBCon", function(data) { $("#chooseDBVerbindung").html(data)  });
 						//$("#chooseDB").val(""); $("#name").val(""); $("#url").val(""); $("#user").val(""); $("#password").val("");
-						$.post("../overview/monitor", function(data) { $("#content").html(data) });
+						$.post("../../overview/monitor/show", function(data) { $("#content").html(data) });
 						$("#submenu").fadeOut();
 					}
 					
 				});
 			} else {
-				alert("Bitte alle Felder ausfüllen!");
+				alert("Bitte alle Felder ausfï¿½llen!");
 			}
 		});
 		$("#selectServer").change(function() {

@@ -15,10 +15,11 @@ import org.json.JSONObject;
 import at.kabeg.controller.MonitoringErrorController;
 import at.kabeg.model.MonitoringError;
 
-@Path("/manageApplication")
+@Path("/application")
 public class ManageApplication {
 	
 	@POST
+	@Path("/manage")
 	@Produces({ MediaType.TEXT_HTML })
 	@Consumes(MediaType.APPLICATION_JSON)
 	public String showData(String input) {
@@ -29,13 +30,10 @@ public class ManageApplication {
 		
 		try {
 			JSONObject jo = new JSONObject(input);
-			ArrayList<MonitoringError> errors = mec.getMonitoringErrorByApplicationID(jo.getString("id"));
 			data = "<table>";
 			data +="<thead><tr><th style=\"border-left: 1px solid #D0D0D0;\">Monitoring Error</th><th>Server</th><th>Supervisor</th><th>Attendance</th></tr>";
 			data += "</thead><tbody>";
-			for (MonitoringError me : errors){
-				data += "<tr><td style=\"border-left: 1px solid #D0D0D0;\">"+me.getDescription()+"</td></tr>";//<td>"+rs.getString("server")+"</td><td>"+rs.getString("vorname")+" "+rs.getString("nachname")+"</td><td>"+rs.getString("bereitschaft")+"</td></tr>";
-			}
+			data += mec.getMonitoringErrorByApplicationID(jo.getString("id")); 
 			data += "</tbody>";
 			data += "</table>";
 			state = "success";

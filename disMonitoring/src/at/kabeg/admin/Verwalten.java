@@ -35,7 +35,7 @@ public class Verwalten {
 		
 		sr.setReplacements(p);
 		p.put("$applicationOption", applicationOption);
-		result = sr.replaceInFile(this.getClass().getResource("../../../../../html/verwalten_template.html").getPath());
+		result = sr.replaceInFile(Thread.currentThread().getContextClassLoader().getResource("html/verwalten_template.html").getPath());
 		
 		return result;
 	}

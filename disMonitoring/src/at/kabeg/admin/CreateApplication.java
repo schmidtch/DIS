@@ -11,8 +11,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import at.kabeg.controller.ApplicationController;
 import at.kabeg.controller.CompanyController;
@@ -21,11 +19,14 @@ import at.kabeg.model.Application;
 import at.kabeg.model.Company;
 import at.kabeg.model.Supervisor;
 import at.kabeg.utilities.StringReplacer;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-@Path("/createApplication")
+@Path("/application")
 public class CreateApplication {
 
 	@GET
+	@Path("/getForm")
 	@Produces({ MediaType.TEXT_HTML })
 	public String form() {
 
@@ -55,16 +56,12 @@ public class CreateApplication {
 		p.put("$companyOption", companyOption);
 		p.put("$supervisorOption", supervisorOption);
 		sr.setReplacements(p);
-		result = sr.replaceInFile(this.getClass()
-				.getResource("../../../../../html/application_form.html")
-				.getPath());
-
-		
-		
+		result = sr.replaceInFile(Thread.currentThread().getContextClassLoader().getResource("html/application_form.html").getPath());
 		return result;
 	}
 	
 	@POST
+	@Path("/create")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces({ MediaType.APPLICATION_JSON })
 	public String create(String input) {
@@ -86,8 +83,13 @@ public class CreateApplication {
 			e.printStackTrace();
 		} 
 		
-		response.put("state", state);
-		response.put("msg", msg);
+		try {
+			response.put("state", state);
+			response.put("msg", msg);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		return response.toString();
 	}

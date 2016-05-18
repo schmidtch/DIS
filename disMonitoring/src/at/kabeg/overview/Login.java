@@ -1,5 +1,7 @@
 package at.kabeg.overview;
 
+import java.util.Properties;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -14,18 +16,19 @@ import at.kabeg.utilities.LoginData;
 import at.kabeg.utilities.StringReplacer;
 
 
-
 @Path("/login")
 public class Login {
 	
 	@GET
+	@Path("/getForm")
 	@Produces({ MediaType.TEXT_HTML})
-	public String start() {
+	public String irgendwas() {
 		StringReplacer sr = new StringReplacer();	
-		return sr.replaceInFile(this.getClass().getResource("../../../../../login.html").getPath());	
+		return sr.replaceInFile(Thread.currentThread().getContextClassLoader().getResource("login.html").getPath());	
 	}
-	
+	 
 	@POST
+	@Path("/doLogin")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces({MediaType.APPLICATION_JSON})
 	public String checkLogin(String input){

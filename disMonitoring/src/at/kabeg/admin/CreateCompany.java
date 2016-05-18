@@ -16,10 +16,11 @@ import at.kabeg.controller.CompanyController;
 import at.kabeg.model.Company;
 import at.kabeg.utilities.StringReplacer;
 
-@Path("/createCompany")
+@Path("/company")
 public class CreateCompany {
 	
 	@POST
+	@Path("/create")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces({ MediaType.APPLICATION_JSON })
 	public String create(String input) {
@@ -42,19 +43,25 @@ public class CreateCompany {
 			e.printStackTrace();
 		}
 		
-		response.put("state", state);
-		response.put("msg", msg);
+		try {
+			response.put("state", state);
+			response.put("msg", msg);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		return response.toString();
 	}
 
 	@GET
+	@Path("/getForm")
 	@Produces({ MediaType.TEXT_HTML })
 	public String form() throws SQLException {
 
 		StringReplacer sr = new StringReplacer();
 		
-		return sr.replaceInFile(this.getClass().getResource("../../../../../html/company_form.html").getPath());
+		return sr.replaceInFile(Thread.currentThread().getContextClassLoader().getResource("html/company_form.html").getPath());
 	}
 
 

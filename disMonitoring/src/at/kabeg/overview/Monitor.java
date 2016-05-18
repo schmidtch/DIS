@@ -17,6 +17,7 @@ import at.kabeg.utilities.StringReplacer;
 public class Monitor {
 
 	@POST
+	@Path("/show")
 	@Produces({ MediaType.TEXT_HTML })
 	public String start(String input) {
 		
@@ -35,7 +36,7 @@ public class Monitor {
 		p=new Properties();
 		p.put("$monitorContent", entry);
 		sr.setReplacements(p);
-		result = sr.replaceInFile(this.getClass().getResource("../../../../../html/monitor_template.html").getPath());
+		result = sr.replaceInFile(Thread.currentThread().getContextClassLoader().getResource("html/monitor_template.html").getPath());
 
 		return result;
 	}

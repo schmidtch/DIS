@@ -31,7 +31,7 @@ public class DBConnectionHandler {
 		if (instance == null) {
 			try {
 				context = new InitialContext();
-				ds = (DataSource) context.lookup("java:kluimpaxlaDS");
+				ds = (DataSource) context.lookup("java:/kluimpaxlaDS");
 			} catch (NamingException e) {
 				System.err.println("ERROR WITH PATH, CANNOT LOCATE THE DATASOURCE " + e.getMessage());
 				e.printStackTrace();

@@ -15,9 +15,11 @@ import at.kabeg.controller.MonitoringErrorController;
 
 
 
-@Path("/ackTask")
+@Path("/task")
 public class AckTask {
+	
 	@POST
+	@Path("/ack")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces({ MediaType.APPLICATION_JSON})
 	public String start(String input) {

@@ -16,6 +16,7 @@ public class Application {
 	private String name;
 	private String beschreibung;
 	private String bereitschaft;
+	private String datum;
 	private boolean error;
 	private String ampel;
 	private ArrayList<Server> servers = new ArrayList<Server>();
@@ -182,5 +183,13 @@ public class Application {
 
 	public void setErrors(ArrayList<MonitoringError> errors) {
 		this.errors = errors;
+	}
+
+	public String getDatum() {
+		return datum;
+	}
+
+	public void setDatum(String datum) {
+		this.datum = datum;
 	}
 }

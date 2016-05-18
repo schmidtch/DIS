@@ -8,7 +8,7 @@ import java.io.InputStreamReader;
 
 public class DBQueryHandler {
 
-	private String file = this.getClass().getResource("../../../../../queries.csv").getPath();
+	private String file = Thread.currentThread().getContextClassLoader().getResource("queries.csv").getPath();
 	private static BufferedReader br = null;
 	
 	private DBQueryHandler(){

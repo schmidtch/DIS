@@ -6,7 +6,7 @@
 			monitoring_id = ids[0];
 			$.ajax({
 				type : "GET",
-				url : "../admin/server/"+monitoring_id
+				url : "../../admin/server/"+monitoring_id
 			}).done(function(msg) {
 					$("#selectServer").html(msg);
 					$("#logDataInfo").fadeIn();
@@ -21,7 +21,7 @@
 			if(server_id!="" && logfile!="" && logdir !="" && monitoring_id != "" && search_string !=""){
 				$.ajax({
 					type : "POST",
-					url : "../admin/createLogDaten",
+					url : "../../admin/logdata/create",
 					contentType : "application/json; charset=utf-8",
 					dataType : "json",
 					data : JSON.stringify({ server_id : server_id, logfile : logfile, logdir : logdir, monitoring_id : monitoring_id, search_string : search_string })
@@ -29,7 +29,7 @@
 					var responseText = msg.state;
 					
 					if(responseText=="error JSON"){
-						alert("Fehler bei der Übertragung check JSON String!");
+						alert("Fehler bei der ï¿½bertragung check JSON String!");
 					} else if(responseText=="error SQL"){
 						var message = msg.message;
 						alert("DB Error!\n"+message);
@@ -37,13 +37,13 @@
 						alert("Logdate for Server created successfully!");
 						//$.post("refreshDBCon", function(data) { $("#chooseDBVerbindung").html(data)  });
 						//$("#chooseDB").val(""); $("#name").val(""); $("#url").val(""); $("#user").val(""); $("#password").val("");
-						$.post("../overview/monitor", function(data) { $("#content").html(data) });
+						$.post("../../overview/monitor/show", function(data) { $("#content").html(data) });
 						$("#submenu").fadeOut();
 					}
 					
 				});
 			} else {
-				alert("Bitte alle Felder ausfüllen!");
+				alert("Bitte alle Felder ausfï¿½llen!");
 			}
 		});
 	});

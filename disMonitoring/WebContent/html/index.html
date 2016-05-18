@@ -2,7 +2,7 @@
 var shownServerId="", shownErrorId="", shownMonitor=0;
 $(document).ready(function(e){
 	$("#back_content").css('min-height',$(this).height()-170);
-	$.post("monitor", function(data) {
+	$.post("../monitor/show", function(data) {
 		content=data;
 	}).fail(function(data) {
 		content="<p style=\"text-align:center; font-weight:bold; font-size:18px;\">A Error accured at the Server.</p>"+data;
@@ -24,9 +24,10 @@ $("#menu ul li").click(function(e){
 		if($("#submenu").css('display')!="none") $("#submenu").fadeOut();
 		var url = $(this).attr('id');
 		if(url!="monitor") {
-			url = "../admin/"+url;
+			url = "../../admin/"+url;
 			shownMonitor=0; 
 		} else {
+			url = "../"+url+"/show";
 			shownMonitor=1;
 		}
 		$.post(url, function(data) { $("#content").html(data)  });
@@ -34,14 +35,14 @@ $("#menu ul li").click(function(e){
 });
 $("#submenu ul li").click(function(e){
 	shownMonitor=0; 
-	$.get("../admin/create"+$(this).attr('id'), function(data) { $("#content").html(data) });
+	$.get("../../admin/"+$(this).attr('id')+"/getForm", function(data) { $("#content").html(data) });
 });
 
 function ack_error(status, id, server, app){
 	if(status=='red'){		
 		$.ajax({
 			type : "POST",
-			url : "../service/ackTask",
+			url : "../../service/task/ack",
 			contentType : "application/json; charset=utf-8",
 			dataType : "json",
 			data : JSON.stringify({ monitoring_id : id, server_id : server, app_id : app })
@@ -49,12 +50,12 @@ function ack_error(status, id, server, app){
 			var responseText = msg.state;
 			
 			if(responseText=="error JSON"){
-				alert("Fehler bei der Übertragung check JSON String!");
+				alert("Fehler bei der ï¿½bertragung check JSON String!");
 			} else if(responseText=="error SQL"){
 				var message = msg.message;
 				alert("DB Error!\n"+message);
 			} else if(responseText=="success"){
-				$.post("monitor", function(data) { $("#content").html(data);  });
+				$.post("../monitor/show", function(data) { $("#content").html(data);  });
 			}
 			
 		});
@@ -71,7 +72,7 @@ function loadMonitor(){
 	if(shownMonitor==1){
 		$("#content").hide();
 		$("#spinner").fadeIn(function complete() {
-			$.post("monitor", function(data) {
+			$.post("../monitor/show", function(data) {
 				content=data;
 			}).fail(function(data) {
 				content="<p style=\"text-align:center; font-weight:bold; font-size:18px;\">A Error accured at the Server.</p>"+data;
@@ -90,7 +91,7 @@ function showHistoryForError(monitoring_id, server_id, monitoringName, serverNam
 	var content="";
 	$("#content").hide();
 	$("#spinner").fadeIn(function complete() {
-		$.get("../admin/history/"+monitoring_id+"/"+server_id+"/"+monitoringName+"/"+serverName, function(data) {
+		$.get("../../admin/history/"+monitoring_id+"/"+server_id+"/"+monitoringName+"/"+serverName, function(data) {
 			content=data;
 		}).fail(function(data) {
 			content="<p style=\"text-align:center; font-weight:bold; font-size:18px;\">A Error accured at the Server.</p>"+data;
@@ -122,7 +123,7 @@ function showError(id){
 }
 
 function logout(){
-	window.location.href="/disMonitoring/overview/login";
+	window.location.href="/disMonitoring/overview/login/getForm";
 }
 
 </script>
@@ -144,16 +145,16 @@ function logout(){
 		<div id="blankBanner">
 			<div id="submenu">
 				<ul>
-					<li id="Application">Application</li>
-					<li id="Error">Error</li>
-					<li id="LogDaten">Log-Data</li>
-					<li id="Company">Company</li>
-					<li id="Server">Server</li>
+					<li id="application">Application</li>
+					<li id="error">Error</li>
+					<li id="logdata">Log-Data</li>
+					<li id="company">Company</li>
+					<li id="server">Server</li>
 				</ul>
 			</div>
 		</div>
 		<div id="spinner" style="text-align:center;">
-			<img style="width:100px;" src="../pictures/spinner.gif" alt="spinner" />
+			<img style="width:100px;" src="../../pictures/spinner.gif" alt="spinner" />
 		</div>
 		<div id="content"></div>
 	</div>

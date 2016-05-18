@@ -16,6 +16,7 @@ public enum Queries {
 	getErrorAnzahlForServer("getErrorAnzahlForServer"),
 	getHistoryByMIDAndSID("getHistoryByMIDAndSID"),
 	getOverviewByApplicationID("getOverviewByApplicationID"),
+	getMonitoringError("getMonitoringError"),
 	insertHistory("insertHistory"),
 	insertCompany("insertCompany"),
 	insertServer("insertServer"),

@@ -29,8 +29,8 @@ public class History {
 		} 
 		p.put("$monitoringName", monitoringName);
 		p.put("$serverName", serverName);
-		
-		return sr.replaceInFile(this.getClass().getResource("../../../../../html/history_for_error_template.html").getPath());
+		sr.setReplacements(p);
+		return sr.replaceInFile(Thread.currentThread().getContextClassLoader().getResource("html/history_for_error_template.html").getPath());
 	}
 	
 	

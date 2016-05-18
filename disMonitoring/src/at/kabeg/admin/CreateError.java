@@ -22,10 +22,11 @@ import at.kabeg.model.MonitoringError;
 import at.kabeg.model.Server;
 import at.kabeg.utilities.StringReplacer;
 
-@Path("/createError")
+@Path("/error")
 public class CreateError {
 
 	@GET
+	@Path("/getForm")
 	@Produces({ MediaType.TEXT_HTML })
 	public String form() {
 
@@ -56,13 +57,12 @@ public class CreateError {
 		p.put("$applOption", applOption);
 		p.put("$serverOption", serverOption);
 		sr.setReplacements(p);
-		result = sr.replaceInFile(this.getClass()
-				.getResource("../../../../../html/error_form.html")
-				.getPath());		
+		result = sr.replaceInFile(Thread.currentThread().getContextClassLoader().getResource("html/error_form.html").getPath());		
 		return result;
 	}
 	
 	@POST
+	@Path("/create")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces({ MediaType.APPLICATION_JSON })
 	public String create(String input) {

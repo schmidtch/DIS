@@ -16,10 +16,11 @@ import at.kabeg.controller.ServerController;
 import at.kabeg.model.Server;
 import at.kabeg.utilities.StringReplacer;
 
-@Path("/createServer")
+@Path("/server")
 public class CreateServer {
 	
 	@POST
+	@Path("/create")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces({ MediaType.APPLICATION_JSON })
 	public String create(String input) {
@@ -51,12 +52,13 @@ public class CreateServer {
 	}
 
 	@GET
+	@Path("/getForm")
 	@Produces({ MediaType.TEXT_HTML })
 	public String form() throws SQLException {
 
 		StringReplacer sr = new StringReplacer();
 		
-		return sr.replaceInFile(this.getClass().getResource("../../../../../html/server_form.html").getPath());
+		return sr.replaceInFile(Thread.currentThread().getContextClassLoader().getResource("html/server_form.html").getPath());
 	}
 	
 }

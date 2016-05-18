@@ -3,7 +3,7 @@
 		$("#selectApplication").change(function() {
 			$.ajax({
 				type : "POST",
-				url : "../admin/manageApplication",
+				url : "../../admin/application/manage",
 				contentType : "application/json; charset=utf-8",
 				dataType : "json",
 				data : JSON.stringify({ id : $(this).val() })

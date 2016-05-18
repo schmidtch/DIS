@@ -13,7 +13,7 @@
 			if(supervisor!="" && company!="" && name !="" && beschreibung != "" && bereitschaft !=""){
 				$.ajax({
 					type : "POST",
-					url : "../admin/createApplication",
+					url : "../../admin/application/create",
 					contentType : "application/json; charset=utf-8",
 					dataType : "json",
 					data : JSON.stringify({ supervisor : supervisor, company : company, name : name, beschreibung : beschreibung, bereitschaft : bereitschaft })
@@ -21,7 +21,7 @@
 					var responseText = msg.state;
 					
 					if(responseText=="error JSON"){
-						alert("Fehler bei der Übertragung check JSON String!");
+						alert("Fehler bei der ï¿½bertragung check JSON String!");
 					} else if(responseText=="error SQL"){
 						var message = msg.message;
 						alert("DB Error!\n"+message);
@@ -29,13 +29,13 @@
 						alert("Application \""+name+"\" created successfully!");
 						//$.post("refreshDBCon", function(data) { $("#chooseDBVerbindung").html(data)  });
 						//$("#chooseDB").val(""); $("#name").val(""); $("#url").val(""); $("#user").val(""); $("#password").val("");
-						$.post("../overview/monitor", function(data) { $("#content").html(data) });
+						$.post("../../overview/monitor/show", function(data) { $("#content").html(data) });
 						$("#submenu").fadeOut();
 					}
 					
 				});
 			} else {
-				alert("Bitte alle Felder ausfüllen!");
+				alert("Bitte alle Felder ausfï¿½llen!");
 			}
 		});
 	});

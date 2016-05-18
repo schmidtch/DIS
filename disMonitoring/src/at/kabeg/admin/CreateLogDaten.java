@@ -20,10 +20,11 @@ import at.kabeg.model.LogDaten;
 import at.kabeg.model.MonitoringError;
 import at.kabeg.utilities.StringReplacer;
 
-@Path("/createLogDaten")
+@Path("/logdata")
 public class CreateLogDaten {
 	
 	@GET
+	@Path("/getForm")
 	@Produces({ MediaType.TEXT_HTML })
 	public String form() throws SQLException {
 
@@ -39,13 +40,14 @@ public class CreateLogDaten {
 		}
 		p.put("$monitoringOption", monitoringOption);
 		sr.setReplacements(p);
-		result = sr.replaceInFile(this.getClass().getResource("../../../../../html/logdata_form.html").getPath());
+		result = sr.replaceInFile(Thread.currentThread().getContextClassLoader().getResource("html/logdata_form.html").getPath());
 		
 		return result;
 	
 	}
 	
 	@POST
+	@Path("/create")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces({ MediaType.APPLICATION_JSON })
 	public String create(String input) {

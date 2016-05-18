@@ -18,10 +18,11 @@ import at.kabeg.utilities.DBQueryHandler;
 import at.kabeg.utilities.Queries;
 import at.kabeg.utilities.StringReplacer;
 
-@Path("foundError")
+@Path("/error")
 public class FoundError {
 	
 	@POST
+	@Path("found")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces({ MediaType.APPLICATION_JSON})
 	public String start(String input) {
